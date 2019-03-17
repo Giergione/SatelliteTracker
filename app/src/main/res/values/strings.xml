@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SatelliteTracker</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="compassDescription">Compass image and positioning</string>
+    <string name="testText">TEST</string>
+</resources>

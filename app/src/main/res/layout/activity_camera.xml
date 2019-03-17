@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SatelliteTrackerApplication">
+
+    <SurfaceView
+        android:id="@+id/cameraPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:scaleType="centerInside"/>
+
+    <RelativeLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/LongNr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginBottom="7dp"
+            android:layout_toEndOf="@+id/Longitute"
+            android:text="1234"
+            android:textColor="@color/colorYellow" />
+
+        <TextView
+            android:id="@+id/LatNr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/LongNr"
+            android:layout_marginStart="3dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/Longitute"
+            android:text="1234"
+            android:textColor="@color/colorYellow" />
+
+        <TextView
+            android:id="@+id/Latitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/Longitute"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="0dp"
+            android:text="Latitude:"
+            android:textColor="@color/colorYellow" />
+
+        <TextView
+            android:id="@+id/Longitute"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="7dp"
+            android:text="Longitute:" />
+
+        <ImageView
+            android:id="@+id/marker"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/compassDescription"
+            android:rotation="270"
+            android:src="@drawable/yellowDot" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
