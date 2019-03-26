@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -31,24 +32,32 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     //Layout
     private RelativeLayout overlay;
+    private static final String TAG = "TrackerApplication";
     ImageView yellowDot;
 
     //Camera utility
-    private static final String TAG = "TrackerApplication";
     private Camera mCamera;
     private SurfaceHolder mSurfaceHolder;
     private boolean isCameraviewOn = false;
 
     //Location utility
+    private TextView LongNr;
+    private TextView LatNr;
     private LocationManager locationManager;
     private String locationProvider;
-    TextView LongNr;
-    TextView LatNr;
 
     //Sensor utility
+    private TextView azimuthValue;
+    private TextView elevationValue;
     private static SensorManager sensorManager;
     private Sensor gyroSensor;
     private Sensor rotationSensor;
+
+    float[] rotationMatrix = new float[16];
+    float[] outRotationMatrix = new float[16];
+    float[] orientationValues = new float[3];
+    float azimuth;
+    float elevation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +66,35 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         setContentView(R.layout.activity_camera);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         overlay = findViewById(R.id.overlay);
-        yellowDot=findViewById(R.id.marker);
+        yellowDot = findViewById(R.id.marker);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG, "Missing permissions");
+            return;
+        }
+
+        setupLayout();
 
         sensorManager =(SensorManager)getSystemService(Context.SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
-        setupLayout();
+
+        Criteria criteria = new Criteria();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationProvider = locationManager.getBestProvider(criteria, true);
+        Log.d(TAG, "Provider chosen: " + locationProvider);
+
+        Location lastLocation = locationManager.getLastKnownLocation(locationProvider);
+        if (lastLocation != null) {
+            onLocationChanged(lastLocation);
+        } else {
+            LatNr.setText("NaN");
+            LongNr.setText("NaN");
+        }
     }
 
     private void setupLayout() {
@@ -75,6 +106,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         LongNr = (TextView) findViewById(R.id.LongNr);
         LatNr = (TextView) findViewById(R.id.LatNr);
+        azimuthValue = (TextView) findViewById(R.id.testAz);
+        elevationValue = (TextView) findViewById(R.id.testEl);
     }
 
     @Override
@@ -164,11 +197,21 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Log.d(TAG, "onSensorChanged " + event.sensor.getName() + " x:"
-                + Double.toString( event.values[0]) + " y:"
-                + Double.toString( event.values[1]) + " z:"
-                + Double.toString( event.values[2]));
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_ROTATION_VECTOR:
+                rotationMatrix = new float[16];
+                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+        }
 
+        SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X,
+                SensorManager.AXIS_Z, outRotationMatrix);
+        SensorManager.getOrientation(outRotationMatrix, orientationValues);
+
+        azimuth = (float) (Math.toDegrees(orientationValues[0]));
+        elevation = (float) Math.toDegrees(-orientationValues[1]);
+
+        azimuthValue.setText(Float.toString(azimuth));
+        elevationValue.setText(Float.toString(elevation));
     }
 
     @Override
