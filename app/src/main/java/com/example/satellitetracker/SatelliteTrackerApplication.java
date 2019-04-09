@@ -2,9 +2,11 @@ package com.example.satellitetracker;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -17,9 +19,14 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.BoringLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,15 +37,24 @@ import java.io.IOException;
 public class SatelliteTrackerApplication extends AppCompatActivity
         implements SurfaceHolder.Callback, LocationListener, SensorEventListener {
 
+    //Name Input
+    private TextView satNamePlace;
+    private String satName;
+
     //Layout
     private RelativeLayout overlay;
     private static final String TAG = "TrackerApplication";
-    ImageView yellowDot;
+    private ImageView yellowDot;
+
+    private TextView horizontalPlacement;
 
     //Camera utility
     private Camera mCamera;
     private SurfaceHolder mSurfaceHolder;
     private boolean isCameraviewOn = false;
+    double thetaV;
+    double thetaH;
+    TextView horizontalFov;
 
     //Location utility
     private TextView LongNr;
@@ -53,11 +69,19 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     private Sensor gyroSensor;
     private Sensor rotationSensor;
 
+    //Orientation sensor matrixes
     float[] rotationMatrix = new float[16];
     float[] outRotationMatrix = new float[16];
     float[] orientationValues = new float[3];
     float azimuth;
     float elevation;
+
+    public int deviceWidth;
+    public int deviceHeight;
+
+    //Difference calculator for adjusting the marker
+    //update with every change in target elevation and azimuth
+    private DifferenceCalculator differenceCalculator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,26 +91,31 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         overlay = findViewById(R.id.overlay);
         yellowDot = findViewById(R.id.marker);
+        Intent intent = getIntent();
+        satName = intent.getExtras().getString("satellite_name");
+
+        horizontalPlacement = findViewById(R.id.HorizontalPixelShift);
+
 
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.e(TAG, "Missing permissions");
+            //Log.e(TAG, "Missing permissions");
             return;
         }
 
+        new RESTRequest().requestAzimuths(satName);
         setupLayout();
 
         sensorManager =(SensorManager)getSystemService(Context.SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
-
         Criteria criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationProvider = locationManager.getBestProvider(criteria, true);
-        Log.d(TAG, "Provider chosen: " + locationProvider);
+        //Log.d(TAG, "Provider chosen: " + locationProvider);
 
         Location lastLocation = locationManager.getLastKnownLocation(locationProvider);
         if (lastLocation != null) {
@@ -95,6 +124,12 @@ public class SatelliteTrackerApplication extends AppCompatActivity
             LatNr.setText("NaN");
             LongNr.setText("NaN");
         }
+
+        Display display = getWindowManager().getDefaultDisplay();
+        deviceWidth = display.getWidth();
+        deviceHeight = display.getHeight();
+        differenceCalculator = new DifferenceCalculator(0,0, deviceHeight, deviceWidth);
+        Log.i(TAG, "omegatest: " + Integer.toString(deviceHeight));
     }
 
     private void setupLayout() {
@@ -108,11 +143,19 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         LatNr = (TextView) findViewById(R.id.LatNr);
         azimuthValue = (TextView) findViewById(R.id.testAz);
         elevationValue = (TextView) findViewById(R.id.testEl);
+
+        satNamePlace = (TextView) findViewById(R.id.SatName); //testing purposes only
+        satNamePlace.setText(satName); //testing purposes only
+
+        horizontalFov = (TextView) findViewById(R.id.fovHorizontal);
+        horizontalFov.setText(Double.toString(thetaH));
+
+        //(TextView) ((TextView) findViewById(R.id.SatName)).setText(Double.toString(thetaH));
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "onLocationChanged");
+        //Log.d(TAG, "onLocationChanged");
         LongNr.setText(Double.toString(location.getLongitude()));
         LatNr.setText(Double.toString(location.getLatitude()));
     }
@@ -138,6 +181,9 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mCamera = Camera.open();
+        thetaH = Math.toRadians(mCamera.getParameters().getHorizontalViewAngle());
+        thetaV = Math.toRadians(mCamera.getParameters().getVerticalViewAngle());
+        Log.d(TAG, Double.toString(thetaH));
         mCamera.setDisplayOrientation(90);
     }
 
@@ -152,7 +198,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
+        //Log.d(TAG, "onResume");
 
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(this,
@@ -181,17 +227,17 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.d(TAG, "onStatusChanged " + provider);
+        //Log.d(TAG, "onStatusChanged " + provider);
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        Log.d(TAG, "onProviderEnabled " + provider);
+        //Log.d(TAG, "onProviderEnabled " + provider);
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-        Log.d(TAG, "onProviderDisabled " + provider);
+        //Log.d(TAG, "onProviderDisabled " + provider);
     }
 
 
@@ -203,8 +249,30 @@ public class SatelliteTrackerApplication extends AppCompatActivity
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
         }
 
-        SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X,
-                SensorManager.AXIS_Z, outRotationMatrix);
+        switch (getWindowManager().getDefaultDisplay().getRotation()) {
+            case Surface.ROTATION_0:
+                SensorManager.remapCoordinateSystem(rotationMatrix,
+                        SensorManager.AXIS_X, SensorManager.AXIS_Z,
+                        outRotationMatrix);
+                break;
+            case Surface.ROTATION_90:
+                SensorManager.remapCoordinateSystem(rotationMatrix,
+                        SensorManager.AXIS_Y,
+                        SensorManager.AXIS_MINUS_X,
+                        outRotationMatrix);
+                break;
+            case Surface.ROTATION_180:
+                SensorManager.remapCoordinateSystem(rotationMatrix,
+                        SensorManager.AXIS_MINUS_X,
+                        SensorManager.AXIS_MINUS_Y,
+                        outRotationMatrix);
+                break;
+            case Surface.ROTATION_270:
+                SensorManager.remapCoordinateSystem(rotationMatrix,
+                        SensorManager.AXIS_MINUS_Y,
+                        SensorManager.AXIS_X, outRotationMatrix);
+                break;
+        }
         SensorManager.getOrientation(outRotationMatrix, orientationValues);
 
         azimuth = (float) (Math.toDegrees(orientationValues[0]));
@@ -212,11 +280,23 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         azimuthValue.setText(Float.toString(azimuth));
         elevationValue.setText(Float.toString(elevation));
+
+        //if next elevation+azimuth necessary re-call constructor
+        //differenceCalculator = new DifferenceCalculator(requestTable.getAzimuth(currentTime)
+        //        ,requestTable.getElevation(currentTime))
+
+        //float markerVerticalPlacement = differenceCalculator.getVerticalPlacement(elevation);
+        //float markerHorizontalPlacement = differenceCalculator.getHorizontalPlacement(azimuth);
+        int[] markerPlacementMatrix = differenceCalculator.getDifferenceMatrix(azimuth,elevation);
+
+        horizontalPlacement.setText(Integer.toString(markerPlacementMatrix[1]));
+        yellowDot.setY(markerPlacementMatrix[1]);
+        yellowDot.setX(markerPlacementMatrix[0]);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.d(TAG, "onAccuracyChanged "  + sensor.getName());
+        //Log.d(TAG, "onAccuracyChanged "  + sensor.getName());
 
     }
 

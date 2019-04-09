@@ -117,6 +117,39 @@
             android:layout_toEndOf="@+id/El"
             android:text="NaN" />
 
+        <TextView
+            android:id="@+id/SatName"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/El"
+            android:layout_alignStart="@+id/Az"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/fovHorizontal"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/SatName"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/HorizontalPixelShift"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fovHorizontal"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="-2dp"
+            android:text="TextView" />
+
     </RelativeLayout>
 
 </RelativeLayout>
