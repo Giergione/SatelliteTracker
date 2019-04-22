@@ -65,6 +65,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     //Sensor utility
     private TextView azimuthValue;
     private TextView elevationValue;
+    private TextView rotationValue;
     private static SensorManager sensorManager;
     private Sensor gyroSensor;
     private Sensor rotationSensor;
@@ -75,6 +76,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     float[] orientationValues = new float[3];
     float azimuth;
     float elevation;
+    float rotation;
 
     public int deviceWidth;
     public int deviceHeight;
@@ -143,6 +145,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         LatNr = (TextView) findViewById(R.id.LatNr);
         azimuthValue = (TextView) findViewById(R.id.testAz);
         elevationValue = (TextView) findViewById(R.id.testEl);
+        //rotationValue = (TextView) findViewById(R.id.testRot);
 
         satNamePlace = (TextView) findViewById(R.id.SatName); //testing purposes only
         satNamePlace.setText(satName); //testing purposes only
@@ -264,7 +267,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
             case Surface.ROTATION_180:
                 SensorManager.remapCoordinateSystem(rotationMatrix,
                         SensorManager.AXIS_MINUS_X,
-                        SensorManager.AXIS_MINUS_Y,
+                        SensorManager.AXIS_MINUS_Z,
                         outRotationMatrix);
                 break;
             case Surface.ROTATION_270:
@@ -277,9 +280,11 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         azimuth = (float) (Math.toDegrees(orientationValues[0]));
         elevation = (float) Math.toDegrees(-orientationValues[1]);
+        rotation = (float) Math.toDegrees(orientationValues[2]);
 
         azimuthValue.setText(Float.toString(azimuth));
         elevationValue.setText(Float.toString(elevation));
+        rotationValue.setText(Float.toString(rotation));
 
         //if next elevation+azimuth necessary re-call constructor
         //differenceCalculator = new DifferenceCalculator(requestTable.getAzimuth(currentTime)
@@ -287,7 +292,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         //float markerVerticalPlacement = differenceCalculator.getVerticalPlacement(elevation);
         //float markerHorizontalPlacement = differenceCalculator.getHorizontalPlacement(azimuth);
-        int[] markerPlacementMatrix = differenceCalculator.getDifferenceMatrix(azimuth,elevation);
+        int[] markerPlacementMatrix = differenceCalculator.getDifferenceMatrix(azimuth,elevation,rotation);
 
         horizontalPlacement.setText(Integer.toString(markerPlacementMatrix[1]));
         yellowDot.setY(markerPlacementMatrix[1]);

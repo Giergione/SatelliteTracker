@@ -24,12 +24,13 @@ public class DifferenceCalculator {
         this.targetElevation = elevation;
     }
 
-    public int[] getDifferenceMatrix(float currentAzimuth, float currentElevation) {
+    public int[] getDifferenceMatrix(float currentAzimuth, float currentElevation, float currentRotation) {
         int[] values = new int[2];
         values[0] = Math.round(getVerticalPlacement(currentElevation));
         values[1] = Math.round(getHorizontalPlacement(currentAzimuth));
 
-//36
+        //values = rotationTransformation(values, currentRotation);
+
 
         return values;
     }
@@ -58,5 +59,20 @@ public class DifferenceCalculator {
         } else {
             return centerCoordinates[0] - Math.round(shiftInPixels);
         }
+    }
+
+    private int[] rotationTransformation(int[] values, float rotation) {
+        int[] transformed = values;
+        float rotationDifference;
+        if (rotation < -90f) {
+            rotationDifference = 450f + rotation;
+        } else {
+             rotationDifference = rotation +90f;
+        }
+
+        double angle = Math.tan(values[0]/values[1]);
+        double deviation = Math.sqrt(values[0] * values[0] + values[1] * values[1]);
+
+        return transformed;
     }
 }
