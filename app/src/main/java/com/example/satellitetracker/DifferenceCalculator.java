@@ -29,7 +29,7 @@ public class DifferenceCalculator {
         values[0] = Math.round(getVerticalPlacement(currentElevation));
         values[1] = Math.round(getHorizontalPlacement(currentAzimuth));
 
-        //values = rotationTransformation(values, currentRotation);
+        values = rotationTransformation(values, currentRotation);
 
 
         return values;
@@ -39,12 +39,14 @@ public class DifferenceCalculator {
 
         float difference = Math.abs(currentAzimuth - targetAzimuth) % 180;
         float u = (difference/180);
-        float a = (180f/60f)*deviceWidth;
+        float a = (180f/60f)*deviceHeight;
         float shiftInPixels = u * a;
         if (currentAzimuth < 0) {
-            return centerCoordinates[1] + Math.round(shiftInPixels);
+            //return centerCoordinates[1] + Math.round(shiftInPixels);
+            return Math.round(shiftInPixels);
         } else {
-            return centerCoordinates[1] - Math.round(shiftInPixels);
+            //return centerCoordinates[1] - Math.round(shiftInPixels);
+            return - Math.round(shiftInPixels);
         }
     }
 
@@ -55,23 +57,32 @@ public class DifferenceCalculator {
         float shiftInPixels = u * a;
 
         if (currentElevation < 0) {
-            return centerCoordinates[0] + Math.round(shiftInPixels);
+            //return centerCoordinates[0] + Math.round(shiftInPixels);
+            return Math.round(shiftInPixels);
         } else {
-            return centerCoordinates[0] - Math.round(shiftInPixels);
+            //return centerCoordinates[0] - Math.round(shiftInPixels);
+            return - Math.round(shiftInPixels);
         }
     }
 
     private int[] rotationTransformation(int[] values, float rotation) {
-        int[] transformed = values;
+        int[] transformed = new int[2];
         float rotationDifference;
         if (rotation < -90f) {
             rotationDifference = 450f + rotation;
         } else {
              rotationDifference = rotation +90f;
         }
-
+        double difference = Math.toRadians(rotationDifference);
+/*
         double angle = Math.tan(values[0]/values[1]);
-        double deviation = Math.sqrt(values[0] * values[0] + values[1] * values[1]);
+        double realLength = Math.sqrt(values[0] * values[0] + values[1] * values[1]);
+*/
+        double x = Math.cos(difference) * values[0] + Math.sin(difference) * values[1];
+        double y = -Math.sin(difference) * values[0] + Math.cos(difference) * values[1];
+
+        transformed[0] = centerCoordinates[0] + (int) x;
+        transformed[1] = centerCoordinates[1] + (int) y;
 
         return transformed;
     }

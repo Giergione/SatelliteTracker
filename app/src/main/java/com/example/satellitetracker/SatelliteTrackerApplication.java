@@ -145,7 +145,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         LatNr = (TextView) findViewById(R.id.LatNr);
         azimuthValue = (TextView) findViewById(R.id.testAz);
         elevationValue = (TextView) findViewById(R.id.testEl);
-        //rotationValue = (TextView) findViewById(R.id.testRot);
+        rotationValue = (TextView) findViewById(R.id.RotationDegree);
 
         satNamePlace = (TextView) findViewById(R.id.SatName); //testing purposes only
         satNamePlace.setText(satName); //testing purposes only
@@ -247,24 +247,24 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     @Override
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
-            case Sensor.TYPE_ROTATION_VECTOR:
-                rotationMatrix = new float[16];
-                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
-        }
+                case Sensor.TYPE_ROTATION_VECTOR:
+                    rotationMatrix = new float[16];
+                    SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+            }
 
-        switch (getWindowManager().getDefaultDisplay().getRotation()) {
-            case Surface.ROTATION_0:
-                SensorManager.remapCoordinateSystem(rotationMatrix,
-                        SensorManager.AXIS_X, SensorManager.AXIS_Z,
-                        outRotationMatrix);
-                break;
-            case Surface.ROTATION_90:
-                SensorManager.remapCoordinateSystem(rotationMatrix,
-                        SensorManager.AXIS_Y,
-                        SensorManager.AXIS_MINUS_X,
-                        outRotationMatrix);
-                break;
-            case Surface.ROTATION_180:
+                switch (getWindowManager().getDefaultDisplay().getRotation()) {
+                    case Surface.ROTATION_0:
+                        SensorManager.remapCoordinateSystem(rotationMatrix,
+                                SensorManager.AXIS_X, SensorManager.AXIS_Z,
+                                outRotationMatrix);
+                        break;
+                    case Surface.ROTATION_90:
+                        SensorManager.remapCoordinateSystem(rotationMatrix,
+                                SensorManager.AXIS_Y,
+                                SensorManager.AXIS_MINUS_X,
+                                outRotationMatrix);
+                        break;
+                    case Surface.ROTATION_180:
                 SensorManager.remapCoordinateSystem(rotationMatrix,
                         SensorManager.AXIS_MINUS_X,
                         SensorManager.AXIS_MINUS_Z,
