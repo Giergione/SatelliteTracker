@@ -64,6 +64,16 @@
             android:text="Longitute:" />
 
         <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/compass_pointer" />
+
+        <ImageView
             android:id="@+id/marker"
             android:layout_width="20dp"
             android:layout_height="20dp"
@@ -128,8 +138,9 @@
             android:layout_marginTop="0dp"
             android:text="TextView" />
 
+
         <TextView
-            android:id="@+id/fovHorizontal"
+            android:id="@+id/RotationDegree"
             android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -140,25 +151,24 @@
             android:text="TextView" />
 
         <TextView
-            android:id="@+id/HorizontalPixelShift"
+            android:id="@+id/timeStamp"
             android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fovHorizontal"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="-2dp"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/RotationDegree"
-            android:textColor="@color/colorYellow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/HorizontalPixelShift"
+            android:layout_below="@+id/RotationDegree"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/ticker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timeStamp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
             android:text="TextView" />
 
     </RelativeLayout>

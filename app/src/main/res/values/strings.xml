@@ -2,7 +2,7 @@
     <string name="app_name">Satellite Tracker</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="compassDescription">Compass image and positioning</string>
+    <string name="compassDescription">Satellite position indicator</string>
     <string name="testText">TEST</string>
     <string name="nullResponse">Returned null</string>
 </resources>

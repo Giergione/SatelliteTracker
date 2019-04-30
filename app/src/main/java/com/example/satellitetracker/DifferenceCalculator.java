@@ -66,7 +66,7 @@ public class DifferenceCalculator {
     }
 
     private int[] rotationTransformation(int[] values, float rotation) {
-        int[] transformed = new int[2];
+        int[] transformed = new int[3];
         float rotationDifference;
         if (rotation < -90f) {
             rotationDifference = 450f + rotation;
@@ -74,15 +74,18 @@ public class DifferenceCalculator {
              rotationDifference = rotation +90f;
         }
         double difference = Math.toRadians(rotationDifference);
-/*
-        double angle = Math.tan(values[0]/values[1]);
-        double realLength = Math.sqrt(values[0] * values[0] + values[1] * values[1]);
-*/
         double x = Math.cos(difference) * values[0] + Math.sin(difference) * values[1];
         double y = -Math.sin(difference) * values[0] + Math.cos(difference) * values[1];
 
         transformed[0] = centerCoordinates[0] + (int) x;
         transformed[1] = centerCoordinates[1] + (int) y;
+
+        //arrow rotation calculations
+        float xLength = (float) x;
+        float yLength = (float) y;
+        double angle = Math.toDegrees(Math.atan2(xLength,-yLength));
+        transformed[2] = (int) Math.round(angle);
+
 
         return transformed;
     }

@@ -31,11 +31,22 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.io.IOException;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class SatelliteTrackerApplication extends AppCompatActivity
         implements SurfaceHolder.Callback, LocationListener, SensorEventListener {
+
+
+    //Time stamp
+    Date time = Calendar.getInstance().getTime();
+    private TextView currentTime;
 
     //Name Input
     private TextView satNamePlace;
@@ -45,8 +56,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     private RelativeLayout overlay;
     private static final String TAG = "TrackerApplication";
     private ImageView yellowDot;
+    private ImageView compassArrow;
 
-    private TextView horizontalPlacement;
 
     //Camera utility
     private Camera mCamera;
@@ -54,7 +65,6 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     private boolean isCameraviewOn = false;
     double thetaV;
     double thetaH;
-    TextView horizontalFov;
 
     //Location utility
     private TextView LongNr;
@@ -81,9 +91,18 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     public int deviceWidth;
     public int deviceHeight;
 
+    int tickCount = 0;
+    TextView tickCounter;
+
     //Difference calculator for adjusting the marker
     //update with every change in target elevation and azimuth
     private DifferenceCalculator differenceCalculator;
+    private class MyTimeTask extends TimerTask {
+        public void run() {
+            tickCount++;
+            //differenceCalculator = new DifferenceCalculator(0,0,deviceHeight, deviceWidth);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +112,9 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         overlay = findViewById(R.id.overlay);
         yellowDot = findViewById(R.id.marker);
+        compassArrow = findViewById(R.id.arrow);
         Intent intent = getIntent();
         satName = intent.getExtras().getString("satellite_name");
-
-        horizontalPlacement = findViewById(R.id.HorizontalPixelShift);
 
 
         if (ActivityCompat.checkSelfPermission(this,
@@ -107,7 +125,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
             return;
         }
 
-        new RESTRequest().requestAzimuths(satName);
+        //new RESTRequest().requestAzimuths(satName);
         setupLayout();
 
         sensorManager =(SensorManager)getSystemService(Context.SENSOR_SERVICE);
@@ -132,6 +150,17 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         deviceHeight = display.getHeight();
         differenceCalculator = new DifferenceCalculator(0,0, deviceHeight, deviceWidth);
         Log.i(TAG, "omegatest: " + Integer.toString(deviceHeight));
+
+        try {
+            DateFormat dateFormatter = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+            Date date = dateFormatter.parse("04/30/19 17:54:33");
+            Timer timer = new Timer();
+            //timer.schedule(new MyTimeTask(), date);
+
+            timer.schedule(new MyTimeTask(), 40000);
+        } catch (Exception e) {
+        }
+
     }
 
     private void setupLayout() {
@@ -147,11 +176,14 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         elevationValue = (TextView) findViewById(R.id.testEl);
         rotationValue = (TextView) findViewById(R.id.RotationDegree);
 
+        currentTime = (TextView) findViewById(R.id.timeStamp);
+        currentTime.setText(time.toString());
+
         satNamePlace = (TextView) findViewById(R.id.SatName); //testing purposes only
         satNamePlace.setText(satName); //testing purposes only
 
-        horizontalFov = (TextView) findViewById(R.id.fovHorizontal);
-        horizontalFov.setText(Double.toString(thetaH));
+        tickCounter = (TextView) findViewById(R.id.ticker);
+        tickCounter.setText(String.valueOf(tickCount));
 
         //(TextView) ((TextView) findViewById(R.id.SatName)).setText(Double.toString(thetaH));
     }
@@ -247,24 +279,24 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     @Override
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
-                case Sensor.TYPE_ROTATION_VECTOR:
-                    rotationMatrix = new float[16];
-                    SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
-            }
+            case Sensor.TYPE_ROTATION_VECTOR:
+                rotationMatrix = new float[16];
+                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+        }
 
-                switch (getWindowManager().getDefaultDisplay().getRotation()) {
-                    case Surface.ROTATION_0:
-                        SensorManager.remapCoordinateSystem(rotationMatrix,
-                                SensorManager.AXIS_X, SensorManager.AXIS_Z,
-                                outRotationMatrix);
-                        break;
-                    case Surface.ROTATION_90:
-                        SensorManager.remapCoordinateSystem(rotationMatrix,
-                                SensorManager.AXIS_Y,
-                                SensorManager.AXIS_MINUS_X,
-                                outRotationMatrix);
-                        break;
-                    case Surface.ROTATION_180:
+        switch (getWindowManager().getDefaultDisplay().getRotation()) {
+            case Surface.ROTATION_0:
+                SensorManager.remapCoordinateSystem(rotationMatrix,
+                        SensorManager.AXIS_X, SensorManager.AXIS_Z,
+                        outRotationMatrix);
+                break;
+            case Surface.ROTATION_90:
+                SensorManager.remapCoordinateSystem(rotationMatrix,
+                        SensorManager.AXIS_Y,
+                        SensorManager.AXIS_MINUS_X,
+                        outRotationMatrix);
+                break;
+            case Surface.ROTATION_180:
                 SensorManager.remapCoordinateSystem(rotationMatrix,
                         SensorManager.AXIS_MINUS_X,
                         SensorManager.AXIS_MINUS_Z,
@@ -294,9 +326,9 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         //float markerHorizontalPlacement = differenceCalculator.getHorizontalPlacement(azimuth);
         int[] markerPlacementMatrix = differenceCalculator.getDifferenceMatrix(azimuth,elevation,rotation);
 
-        horizontalPlacement.setText(Integer.toString(markerPlacementMatrix[1]));
         yellowDot.setY(markerPlacementMatrix[1]);
         yellowDot.setX(markerPlacementMatrix[0]);
+        compassArrow.setRotation(markerPlacementMatrix[2]);
     }
 
     @Override
