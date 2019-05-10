@@ -12,6 +12,7 @@ import cz.msebera.android.httpclient.entity.mime.Header;
 
 public class DataRequest {
 
+
     private static final String BASE_URL = "https://api.twitter.com/1/";
     private static AsyncHttpClient client = new AsyncHttpClient();
 

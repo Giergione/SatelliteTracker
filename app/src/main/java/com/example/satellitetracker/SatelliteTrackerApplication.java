@@ -157,7 +157,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
             Timer timer = new Timer();
             //timer.schedule(new MyTimeTask(), date);
 
-            timer.schedule(new MyTimeTask(), 40000);
+            timer.schedule(new MyTimeTask(), date,40000);
+
         } catch (Exception e) {
         }
 
