@@ -163,12 +163,46 @@
 
         <TextView
             android:id="@+id/ticker"
+            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/timeStamp"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="2dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/firstDateTime"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ticker"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="37dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/currentAzimuth"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/firstDateTime"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="1dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/currentElevation"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/currentAzimuth"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="1dp"
             android:text="TextView" />
 
     </RelativeLayout>

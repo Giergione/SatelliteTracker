@@ -1,27 +1,37 @@
 package com.example.satellitetracker;
 
+import android.util.Log;
 import android.view.Display;
 import android.widget.ImageView;
 
-public class DifferenceCalculator {
+import java.util.Observable;
+
+public class DifferenceCalculator extends Observable {
+
+    private static final String TAG = "DifferenceCalculator";
 
     private float targetAzimuth;
     private float targetElevation;
-    private int deviceWidth;
-    private int deviceHeight;
-    private int[] centerCoordinates = new int[2];
+    private int deviceWidth = SatelliteTrackerApplication.deviceWidth;
+    private int deviceHeight = SatelliteTrackerApplication.deviceHeight;
+    private float horizontalFov = (float) SatelliteTrackerApplication.horizontalFoV;
+    private float verticalFov = (float) SatelliteTrackerApplication.verticalFoV;
+    private int[] centerCoordinates = {(SatelliteTrackerApplication.deviceWidth / 2),
+            (SatelliteTrackerApplication.deviceHeight / 2)};
 
 
-    public DifferenceCalculator(float azimuth, float elevation, int deviceHeight, int deviceWidth) {
-        this.deviceHeight = deviceHeight;
-        this.deviceWidth = deviceWidth;
-        this.centerCoordinates[0] = deviceWidth / 2;
-        this.centerCoordinates[1] = deviceHeight / 2;
-        if (azimuth < 0) {
-            this.targetAzimuth = 360 + azimuth;
+    public DifferenceCalculator(float azimuth, float elevation) {
+        //this.centerCoordinates[0] = deviceWidth / 2;
+        //this.centerCoordinates[1] = deviceHeight / 2;
+        synchronized (this) {
+            if (azimuth < 0) {
+                this.targetAzimuth = 360 + azimuth;
+            }
+            this.targetAzimuth = azimuth;
+            this.targetElevation = elevation;
         }
-        this.targetAzimuth = azimuth;
-        this.targetElevation = elevation;
+        setChanged();
+        notifyObservers();
     }
 
     public int[] getDifferenceMatrix(float currentAzimuth, float currentElevation, float currentRotation) {
@@ -37,9 +47,9 @@ public class DifferenceCalculator {
 
     private float getHorizontalPlacement(float currentAzimuth) {
 
-        float difference = Math.abs(currentAzimuth - targetAzimuth) % 180;
+        float difference = ((currentAzimuth - targetAzimuth + 180) %360 ) - 180;
         float u = (difference/180);
-        float a = (180f/60f)*deviceHeight;
+        float a = (180f/horizontalFov)*deviceHeight;
         float shiftInPixels = u * a;
         if (currentAzimuth < 0) {
             //return centerCoordinates[1] + Math.round(shiftInPixels);
@@ -51,18 +61,13 @@ public class DifferenceCalculator {
     }
 
     private float getVerticalPlacement(float currentElevation) {
-        float difference = Math.abs(currentElevation - targetElevation) % 90;
+        float difference = targetElevation - currentElevation;
         float u = (difference/180);
-        float a = (180f/35f)*deviceWidth;
+        float a = (180f/verticalFov)*deviceWidth;
         float shiftInPixels = u * a;
 
-        if (currentElevation < 0) {
-            //return centerCoordinates[0] + Math.round(shiftInPixels);
-            return Math.round(shiftInPixels);
-        } else {
-            //return centerCoordinates[0] - Math.round(shiftInPixels);
-            return - Math.round(shiftInPixels);
-        }
+        return Math.round(shiftInPixels);
+
     }
 
     private int[] rotationTransformation(int[] values, float rotation) {
@@ -88,5 +93,14 @@ public class DifferenceCalculator {
 
 
         return transformed;
+    }
+
+    public synchronized float getTargetAzimuth() {
+        Log.i(TAG, "getTargetAzimuth: asked for azimuth");
+        return targetAzimuth;
+    }
+
+    public synchronized float getTargetElevation() {
+        return targetElevation;
     }
 }
