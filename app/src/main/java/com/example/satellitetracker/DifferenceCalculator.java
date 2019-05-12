@@ -6,7 +6,7 @@ import android.widget.ImageView;
 
 import java.util.Observable;
 
-public class DifferenceCalculator extends Observable {
+public class DifferenceCalculator {
 
     private static final String TAG = "DifferenceCalculator";
 
@@ -30,9 +30,10 @@ public class DifferenceCalculator extends Observable {
             this.targetAzimuth = azimuth;
             this.targetElevation = elevation;
         }
-        setChanged();
-        notifyObservers();
+        SatelliteTrackerApplication.latestUI = false;
+
     }
+
 
     public int[] getDifferenceMatrix(float currentAzimuth, float currentElevation, float currentRotation) {
         int[] values = new int[2];
@@ -96,7 +97,6 @@ public class DifferenceCalculator extends Observable {
     }
 
     public synchronized float getTargetAzimuth() {
-        Log.i(TAG, "getTargetAzimuth: asked for azimuth");
         return targetAzimuth;
     }
 

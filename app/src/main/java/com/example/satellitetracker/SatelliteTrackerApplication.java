@@ -20,6 +20,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.nfc.Tag;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -53,6 +54,8 @@ import java.util.TimerTask;
 public class SatelliteTrackerApplication extends AppCompatActivity
         implements SurfaceHolder.Callback, LocationListener, SensorEventListener {
 
+    private static final long TIMER_DURATION = 30000;
+
     //Time stamp
     Date time = Calendar.getInstance().getTime();
     private TextView currentTime;
@@ -68,6 +71,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     private TextView dateTimeView;
     private TextView currentAzimuthView;
     private TextView currentElevationView;
+    private TextView timeTillNextSet;
+    private CountDownTimer countDownTimer;
 
     //Layout
     private RelativeLayout overlay;
@@ -111,6 +116,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     //Difference calculator for adjusting the marker
     //update with every change in target elevation and azimuth
     public static DifferenceCalculator differenceCalculator;
+    public  static boolean latestUI = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,27 +163,61 @@ public class SatelliteTrackerApplication extends AppCompatActivity
             LongNr.setText("NaN");
         }
 
+
         Display display = getWindowManager().getDefaultDisplay();
         deviceWidth = display.getWidth();
         deviceHeight = display.getHeight();
 
         differenceCalculator = new DifferenceCalculator(0,0);
 
+        Calendar startTime = Calendar.getInstance();
 
-        //DateFormat dateFormatter = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
-        //Date date = dateFormatter.parse("05/10/19 18:34:00");
-
-
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.set(Calendar.HOUR_OF_DAY, 2);
-        calendar.set(Calendar.MINUTE, 1);
-        calendar.set(Calendar.SECOND, 0);
+        startTime.set(Calendar.HOUR_OF_DAY, 11);
+        startTime.set(Calendar.MINUTE, 45);
+        startTime.set(Calendar.SECOND, 0);
 
         //calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
         //calendar.set(Calendar.MINUTE, Integer.valueOf(dateTime.substring(dateTime.length()-5,dateTime.length()-3)));
         //calendar.set(Calendar.SECOND, Integer.valueOf(dateTime.substring(dateTime.length()-2)));
-        setTimedEvent(calendar.getTimeInMillis());
+
+        Calendar currentTime = Calendar.getInstance();
+
+        long timeUntillFirstPoint;
+        if (time.compareTo(startTime.getTime()) < 0) {
+            timeUntillFirstPoint = (startTime.getTime().getTime() - currentTime.getTime().getTime());
+        } else {
+            Log.i(TAG, "onCreate: time.getday - " + currentTime.get(Calendar.DAY_OF_YEAR));
+            startTime.set(Calendar.DAY_OF_YEAR, currentTime.get(Calendar.DAY_OF_YEAR)+1);
+            timeUntillFirstPoint = (startTime.getTime().getTime() - currentTime.getTime().getTime());
+        }
+        Log.i(TAG, "onCreate: timeuntillfirstpoint: " +timeUntillFirstPoint);
+
+        setTimedEvent(startTime.getTimeInMillis());
+
+
+        countDownTimer = new CountDownTimer(timeUntillFirstPoint, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int seconds = (int) millisUntilFinished / 1000;
+                timeTillNextSet.setText(String.valueOf(seconds));
+            }
+
+            @Override
+            public void onFinish() {
+                countDownTimer = new CountDownTimer(TIMER_DURATION, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        int seconds = (int) millisUntilFinished / 1000;
+                        timeTillNextSet.setText(String.valueOf(seconds));
+                    }
+
+                    @Override
+                    public void onFinish() {
+
+                    }
+                };
+            }
+        }.start();
     }
 
     private void setTimedEvent(long timeInMillis) {
@@ -211,6 +251,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         dateTimeView = (TextView) findViewById(R.id.firstDateTime);
         currentAzimuthView = (TextView) findViewById(R.id.currentAzimuth);
         currentElevationView = (TextView) findViewById(R.id.currentElevation);
+        timeTillNextSet = (TextView) findViewById(R.id.timeTillNextSet);
         dateTimeView.setText(dateTime);
 
         //(TextView) ((TextView) findViewById(R.id.SatName)).setText(Double.toString(thetaH));
@@ -308,6 +349,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+
+
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ROTATION_VECTOR:
                 rotationMatrix = new float[16];
@@ -355,6 +398,10 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         yellowDot.setY(markerPlacementMatrix[1]);
         yellowDot.setX(markerPlacementMatrix[0]);
         compassArrow.setRotation(markerPlacementMatrix[2]);
+
+        if (!latestUI) {
+            updateObservedCoords();
+        }
     }
 
     @Override
@@ -364,11 +411,13 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
 
     public void updateObservedCoords() {
+        countDownTimer.cancel();
+        countDownTimer.start();
         float elevation = differenceCalculator.getTargetElevation();
         float azimuth = differenceCalculator.getTargetAzimuth();
         currentElevationView.setText(String.valueOf(elevation));
         currentAzimuthView.setText(String.valueOf(azimuth));
+        latestUI = true;
     }
-
 
 }

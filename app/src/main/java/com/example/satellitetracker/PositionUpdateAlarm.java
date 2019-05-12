@@ -18,7 +18,7 @@ import static com.example.satellitetracker.SatelliteTrackerApplication.elevation
 public class PositionUpdateAlarm extends BroadcastReceiver {
 
     private static final String TAG = "PositionUpdateAlarm";
-    private static final int waitInMillis = 10000;
+    private static final int waitInMillis = 30000;
 
 
     @Override
@@ -41,6 +41,7 @@ public class PositionUpdateAlarm extends BroadcastReceiver {
                         new DifferenceCalculator(Float.valueOf(currentAzimuth),
                                 Float.valueOf(currentElevation));
                 Log.i(TAG, "azimuth: " + azimuths.get(i) + " - elevation: " + elevations.get(i));
+
 
                 try {
                     Thread.sleep(waitInMillis);
