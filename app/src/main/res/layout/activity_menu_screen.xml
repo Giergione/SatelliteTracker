@@ -3,29 +3,35 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black_overlay"
+        android:background="@mipmap/swordoforion"
         tools:context=".MenuScreen">
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/nameInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/menuButton"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="43dp"
+        android:layout_marginBottom="80dp"
         android:hint="NAME OF THE SATELLITE"
         android:textColor="@color/colorYellow"
-        android:backgroundTint="@color/black_overlay"
+        android:textColorHint="@color/colorYellow"
+        android:backgroundTint="@color/colorYellow"
         android:inputType="textPersonName|textCapWords" />
 
     <Button
+
         android:id="@+id/menuButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginBottom="306dp"
+        android:textColor="@color/colorYellow"
+        android:padding="10dp"
+        android:background="@drawable/menubutton"
+        android:shadowColor="@color/colorYellow"
         android:text="SHOW POSITION" />
 
 

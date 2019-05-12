@@ -172,13 +172,13 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         Calendar startTime = Calendar.getInstance();
 
-        startTime.set(Calendar.HOUR_OF_DAY, 11);
-        startTime.set(Calendar.MINUTE, 45);
-        startTime.set(Calendar.SECOND, 0);
+        //startTime.set(Calendar.HOUR_OF_DAY, 11);
+        //startTime.set(Calendar.MINUTE, 45);
+        //startTime.set(Calendar.SECOND, 0);
 
-        //calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
-        //calendar.set(Calendar.MINUTE, Integer.valueOf(dateTime.substring(dateTime.length()-5,dateTime.length()-3)));
-        //calendar.set(Calendar.SECOND, Integer.valueOf(dateTime.substring(dateTime.length()-2)));
+        startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
+        startTime.set(Calendar.MINUTE, Integer.valueOf(dateTime.substring(dateTime.length()-5,dateTime.length()-3)));
+        startTime.set(Calendar.SECOND, Integer.valueOf(dateTime.substring(dateTime.length()-2)));
 
         Calendar currentTime = Calendar.getInstance();
 
