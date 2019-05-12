@@ -54,14 +54,14 @@
 
         <TextView
             android:id="@+id/Longitute"
+            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="5dp"
             android:layout_marginBottom="7dp"
-            android:text="Longitute:"
-            android:textColor="@color/colorYellow" />
+            android:text="Longitute:" />
 
         <ImageView
             android:id="@+id/arrow"
@@ -85,170 +85,137 @@
 
         <TextView
             android:id="@+id/Az"
+            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sensorInfoText"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="4dp"
-            android:text="az: "
-            android:textColor="@color/colorYellow" />
+            android:layout_marginTop="0dp"
+            android:text="az: " />
 
         <TextView
             android:id="@+id/El"
+            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/Az"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="2dp"
-            android:text="el: "
-            android:textColor="@color/colorYellow" />
+            android:layout_marginTop="0dp"
+            android:text="el: " />
 
         <TextView
             android:id="@+id/testAz"
+            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sensorInfoText"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="4dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="1dp"
             android:layout_toEndOf="@+id/Az"
-            android:text="NaN"
-            android:textColor="@color/colorYellow" />
+            android:text="NaN" />
 
         <TextView
             android:id="@+id/testEl"
+            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/testAz"
             android:layout_marginStart="10dp"
             android:layout_marginTop="2dp"
             android:layout_toEndOf="@+id/El"
-            android:text="NaN"
-            android:textColor="@color/colorYellow" />
+            android:text="NaN" />
 
         <TextView
             android:id="@+id/SatName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="0dp"
-            android:layout_toEndOf="@+id/countdownText"
-            android:text="(Satellite name)"
-            android:textColor="@color/colorYellow" />
-
-
-        <TextView
-            android:id="@+id/RotationDegree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/testEl"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="1dp"
-            android:layout_toEndOf="@+id/textView3"
-            android:text="NaN"
-            android:textColor="@color/colorYellow" />
-
-        <TextView
-            android:id="@+id/currentAzimuth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/timeTillNextSet"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="1dp"
-            android:layout_toEndOf="@+id/targetElevationText"
-            android:text="..."
-            android:textColor="@color/colorYellow" />
-
-        <TextView
-            android:id="@+id/currentElevation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/currentAzimuth"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="2dp"
-            android:layout_toEndOf="@+id/targetElevationText"
-            android:text="..."
-            android:textColor="@color/colorYellow" />
-
-        <TextView
-            android:id="@+id/timeTillNextSet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/SatName"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="1dp"
-            android:layout_toEndOf="@+id/countdownText"
-            android:text="TextView"
-            android:textColor="@color/colorYellow" />
-
-        <TextView
-            android:id="@+id/textView3"
             android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/El"
+            android:layout_alignStart="@+id/Az"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="TextView" />
+
+
+        <TextView
+            android:id="@+id/RotationDegree"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/SatName"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/timeStamp"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/RotationDegree"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/ticker"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timeStamp"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="2dp"
-            android:text="rot:" />
+            android:text="TextView" />
 
         <TextView
-            android:id="@+id/currentSatText"
+            android:id="@+id/firstDateTime"
             android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/ticker"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:text="Observed Sat. :" />
-
+            android:layout_marginTop="37dp"
+            android:text="TextView" />
 
         <TextView
-            android:id="@+id/countdownText"
+            android:id="@+id/currentAzimuth"
             android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/currentSatText"
+            android:layout_below="@+id/firstDateTime"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="1dp"
-            android:text="Next target in :" />
+            android:text="TextView" />
 
         <TextView
-            android:id="@+id/targetAzimuthText"
+            android:id="@+id/currentElevation"
             android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/countdownText"
+            android:layout_below="@+id/currentAzimuth"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="1dp"
-            android:text="Targ. azimuth :" />
+            android:text="TextView" />
 
         <TextView
-            android:id="@+id/targetElevationText"
+            android:id="@+id/timeTillNextSet"
             android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/targetAzimuthText"
+            android:layout_below="@+id/currentElevation"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:text="Targ. elevation :" />
-
-        <TextView
-            android:id="@+id/sensorInfoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="152dp"
-            android:text="Sensor info:"
-            android:textColor="@color/colorYellow" />
+            android:layout_marginTop="1dp"
+            android:text="TextView" />
 
     </RelativeLayout>
+
 </RelativeLayout>

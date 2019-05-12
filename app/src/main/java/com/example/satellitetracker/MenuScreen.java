@@ -94,8 +94,8 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
     }
 
     private void jsonParse() {
-        //String url = "https://api.myjson.com/bins/92hzy";
-        String url = "https://api.myjson.com/bins/92h234234234234242234";
+        String url = "https://api.myjson.com/bins/92hzy";
+        //String url = "https://api.myjson.com/bins/92h234234234234242234";
         JSONObject getParams = new JSONObject();
         button.setEnabled(false);
 

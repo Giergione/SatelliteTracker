@@ -58,7 +58,6 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     //Time stamp
     Date time = Calendar.getInstance().getTime();
-    private TextView currentTime;
 
     //Name Input
     private TextView satNamePlace;
@@ -172,13 +171,13 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         Calendar startTime = Calendar.getInstance();
 
-        //startTime.set(Calendar.HOUR_OF_DAY, 11);
-        //startTime.set(Calendar.MINUTE, 45);
-        //startTime.set(Calendar.SECOND, 0);
+        startTime.set(Calendar.HOUR_OF_DAY, 21);
+        startTime.set(Calendar.MINUTE, 45);
+        startTime.set(Calendar.SECOND, 0);
 
-        startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
-        startTime.set(Calendar.MINUTE, Integer.valueOf(dateTime.substring(dateTime.length()-5,dateTime.length()-3)));
-        startTime.set(Calendar.SECOND, Integer.valueOf(dateTime.substring(dateTime.length()-2)));
+        //startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
+        //startTime.set(Calendar.MINUTE, Integer.valueOf(dateTime.substring(dateTime.length()-5,dateTime.length()-3)));
+        //startTime.set(Calendar.SECOND, Integer.valueOf(dateTime.substring(dateTime.length()-2)));
 
         Calendar currentTime = Calendar.getInstance();
 
@@ -242,17 +241,12 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         elevationValue = (TextView) findViewById(R.id.testEl);
         rotationValue = (TextView) findViewById(R.id.RotationDegree);
 
-        currentTime = (TextView) findViewById(R.id.timeStamp);
-        currentTime.setText(time.toString());
-
         satNamePlace = (TextView) findViewById(R.id.SatName); //testing purposes only
         satNamePlace.setText(satName); //testing purposes only
 
-        dateTimeView = (TextView) findViewById(R.id.firstDateTime);
         currentAzimuthView = (TextView) findViewById(R.id.currentAzimuth);
         currentElevationView = (TextView) findViewById(R.id.currentElevation);
         timeTillNextSet = (TextView) findViewById(R.id.timeTillNextSet);
-        dateTimeView.setText(dateTime);
 
         //(TextView) ((TextView) findViewById(R.id.SatName)).setText(Double.toString(thetaH));
     }
