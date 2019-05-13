@@ -32,7 +32,9 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,29 +57,42 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         implements SurfaceHolder.Callback, LocationListener, SensorEventListener {
 
     private static final long TIMER_DURATION = 30000;
+    private static final int ALLOWED_ERROR_MARGIN = 500;
+    private static final String TAG = "TrackerApplication";
 
     //Time stamp
     Date time = Calendar.getInstance().getTime();
+
+    //Back button
+    private Button backButton;
 
     //Name Input
     private TextView satNamePlace;
     private String satName;
 
     //API data
-    private String dateTime;
     public static ArrayList<String> azimuths;
     public static ArrayList<String> elevations;
-    private TextView dateTimeView;
-    private TextView currentAzimuthView;
-    private TextView currentElevationView;
-    private TextView timeTillNextSet;
     private CountDownTimer countDownTimer;
 
     //Layout
     private RelativeLayout overlay;
-    private static final String TAG = "TrackerApplication";
     private ImageView yellowDot;
     private ImageView compassArrow;
+    private ImageView greenIndicator;
+    private TextView azimuthValue;
+    private TextView elevationValue;
+    private TextView rotationValue;
+    private TextView LongNr;
+    private TextView LatNr;
+    private TextView currentAzimuthView;
+    private TextView currentElevationView;
+    private TextView timeTillNextSet;
+    private TextView initialCountdown;
+    private TextView initialCountdownText;
+    private TextView targetAzimuthText;
+    private TextView targetElevationText;
+    private TextView countDownText;
 
 
     //Camera utility
@@ -86,15 +101,10 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     private boolean isCameraviewOn = false;
 
     //Location utility
-    private TextView LongNr;
-    private TextView LatNr;
     private LocationManager locationManager;
     private String locationProvider;
 
     //Sensor utility
-    private TextView azimuthValue;
-    private TextView elevationValue;
-    private TextView rotationValue;
     private static SensorManager sensorManager;
     private Sensor gyroSensor;
     private Sensor rotationSensor;
@@ -115,7 +125,10 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     //Difference calculator for adjusting the marker
     //update with every change in target elevation and azimuth
     public static DifferenceCalculator differenceCalculator;
-    public  static boolean latestUI = false;
+    public static boolean latestUI = false;
+    public static boolean lastPoint = false;
+    public static boolean riseReached = false;
+    public static boolean activeSession = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +142,6 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         Intent intent = getIntent();
         satName = intent.getExtras().getString("satellite_name");
-        dateTime = intent.getExtras().getString("date_time");
         azimuths = intent.getStringArrayListExtra("azimuths");
         elevations = intent.getStringArrayListExtra("elevations");
 
@@ -137,21 +149,30 @@ public class SatelliteTrackerApplication extends AppCompatActivity
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //Log.e(TAG, "Missing permissions");
+            Log.e(TAG, "Missing permissions");
             return;
         }
 
-        //new RESTRequest().requestAzimuths(satName);
+
+        backButton = findViewById(R.id.closeButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBackToMenu();
+            }
+        });
+
         setupLayout();
 
         sensorManager =(SensorManager)getSystemService(Context.SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
+
         Criteria criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationProvider = locationManager.getBestProvider(criteria, true);
-        //Log.d(TAG, "Provider chosen: " + locationProvider);
+        Log.d(TAG, "Provider chosen: " + locationProvider);
 
 
         Location lastLocation = locationManager.getLastKnownLocation(locationProvider);
@@ -171,8 +192,9 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
         Calendar startTime = Calendar.getInstance();
 
-        startTime.set(Calendar.HOUR_OF_DAY, 21);
-        startTime.set(Calendar.MINUTE, 45);
+        //Dummy rise time for testing
+        startTime.set(Calendar.HOUR_OF_DAY, 4);
+        startTime.set(Calendar.MINUTE, 15);
         startTime.set(Calendar.SECOND, 0);
 
         //startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
@@ -198,23 +220,12 @@ public class SatelliteTrackerApplication extends AppCompatActivity
             @Override
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) millisUntilFinished / 1000;
-                timeTillNextSet.setText(String.valueOf(seconds));
+                initialCountdown.setText(String.valueOf(seconds));
             }
 
             @Override
             public void onFinish() {
-                countDownTimer = new CountDownTimer(TIMER_DURATION, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        int seconds = (int) millisUntilFinished / 1000;
-                        timeTillNextSet.setText(String.valueOf(seconds));
-                    }
-
-                    @Override
-                    public void onFinish() {
-
-                    }
-                };
+                initialCountdown.setText("...");
             }
         }.start();
     }
@@ -230,25 +241,30 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     private void setupLayout() {
         getWindow().setFormat(PixelFormat.UNKNOWN);
-        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.cameraPreview);
+        SurfaceView surfaceView = findViewById(R.id.cameraPreview);
         mSurfaceHolder = surfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        LongNr = (TextView) findViewById(R.id.LongNr);
-        LatNr = (TextView) findViewById(R.id.LatNr);
-        azimuthValue = (TextView) findViewById(R.id.testAz);
-        elevationValue = (TextView) findViewById(R.id.testEl);
-        rotationValue = (TextView) findViewById(R.id.RotationDegree);
+        initialCountdown = findViewById(R.id.initializingCountdown);
+        initialCountdownText = findViewById(R.id.initializeText1);
+        LongNr = findViewById(R.id.LongNr);
+        LatNr = findViewById(R.id.LatNr);
+        azimuthValue = findViewById(R.id.testAz);
+        elevationValue = findViewById(R.id.testEl);
+        rotationValue = findViewById(R.id.RotationDegree);
 
-        satNamePlace = (TextView) findViewById(R.id.SatName); //testing purposes only
-        satNamePlace.setText(satName); //testing purposes only
+        satNamePlace = findViewById(R.id.SatName);
+        satNamePlace.setText(satName);
 
-        currentAzimuthView = (TextView) findViewById(R.id.currentAzimuth);
-        currentElevationView = (TextView) findViewById(R.id.currentElevation);
-        timeTillNextSet = (TextView) findViewById(R.id.timeTillNextSet);
+        currentAzimuthView = findViewById(R.id.currentAzimuth);
+        currentElevationView = findViewById(R.id.currentElevation);
+        timeTillNextSet = findViewById(R.id.timeTillNextSet);
+        targetAzimuthText = findViewById(R.id.targetAzimuthText);
+        targetElevationText = findViewById(R.id.targetElevationText);
+        countDownText = findViewById(R.id.countdownText);
+        greenIndicator = findViewById(R.id.greenindicator);
 
-        //(TextView) ((TextView) findViewById(R.id.SatName)).setText(Double.toString(thetaH));
     }
 
     @Override
@@ -325,6 +341,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         }
     }
 
+
+
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         //Log.d(TAG, "onStatusChanged " + provider);
@@ -385,7 +403,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         elevationValue.setText(Float.toString(elevation));
         rotationValue.setText(Float.toString(rotation));
 
-        //if next elevation+azimuth necessary re-call constructor
+        //if next elevation and azimuth necessary re-call constructor
 
         int[] markerPlacementMatrix = differenceCalculator.getDifferenceMatrix(azimuth,elevation,rotation);
 
@@ -393,9 +411,18 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         yellowDot.setX(markerPlacementMatrix[0]);
         compassArrow.setRotation(markerPlacementMatrix[2]);
 
-        if (!latestUI) {
-            updateObservedCoords();
+        if (Math.abs(markerPlacementMatrix[3]) < ALLOWED_ERROR_MARGIN) {
+            int x = ALLOWED_ERROR_MARGIN - Math.abs(markerPlacementMatrix[3]);
+            float alpha = (float) x / ALLOWED_ERROR_MARGIN;
+            greenIndicator.setAlpha(alpha);
+        } else {
+            greenIndicator.setAlpha(0f);
         }
+
+        if (!latestUI) {
+            updateUI();
+        }
+
     }
 
     @Override
@@ -404,14 +431,67 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     }
 
 
-    public void updateObservedCoords() {
+    public void updateUI() {
+        if (riseReached) {
+            countDownTimer = new CountDownTimer(TIMER_DURATION, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    int seconds = (int) millisUntilFinished / 1000;
+                    timeTillNextSet.setText(String.valueOf(seconds));
+
+                }
+
+                @Override
+                public void onFinish() {
+                    Log.i(TAG, "onFinish: reached finish on last point");
+                    if (lastPoint) {
+                        endTheSession();
+                    }
+                }
+            };
+            compassArrow.setVisibility(View.VISIBLE);
+            yellowDot.setVisibility(View.VISIBLE);
+            greenIndicator.setVisibility(View.VISIBLE);
+            riseReached = false;
+            activeSession = true;
+
+            initialCountdownText.setVisibility(View.INVISIBLE);
+            initialCountdown.setVisibility(View.INVISIBLE);
+            countDownText.setVisibility(View.VISIBLE);
+            targetAzimuthText.setVisibility(View.VISIBLE);
+            targetElevationText.setVisibility(View.VISIBLE);
+        }
+        if (activeSession) {
+            float elevation = differenceCalculator.getTargetElevation();
+            float azimuth = differenceCalculator.getTargetAzimuth();
+            currentElevationView.setText(String.valueOf(elevation));
+            currentAzimuthView.setText(String.valueOf(azimuth));
+        }
         countDownTimer.cancel();
         countDownTimer.start();
-        float elevation = differenceCalculator.getTargetElevation();
-        float azimuth = differenceCalculator.getTargetAzimuth();
-        currentElevationView.setText(String.valueOf(elevation));
-        currentAzimuthView.setText(String.valueOf(azimuth));
         latestUI = true;
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, MenuScreen.class);
+        finish();
+        startActivity(intent);
+    }
+
+    private void goBackToMenu() {
+        Intent intent = new Intent(this, MenuScreen.class);
+        finish();
+        startActivity(intent);
+    }
+
+    private void endTheSession() {
+        Toast.makeText(getBaseContext(), "End of the session", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, MenuScreen.class);
+        finish();
+        startActivity(intent);
+    }
+
 
 }

@@ -5,22 +5,18 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
-
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:screenOrientation="landscape"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MenuScreen">
@@ -30,7 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SatelliteTrackerApplication"></activity>
+        <activity android:name=".SatelliteTrackerApplication">
+
+        </activity>
 
         <receiver android:name=".PositionUpdateAlarm"
             android:enabled="true"

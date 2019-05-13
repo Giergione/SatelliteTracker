@@ -48,7 +48,7 @@
             android:layout_above="@+id/Longitute"
             android:layout_alignParentStart="true"
             android:layout_marginStart="4dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="2dp"
             android:text="Latitude:"
             android:textColor="@color/colorYellow" />
 
@@ -58,10 +58,21 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="4dp"
             android:layout_marginBottom="7dp"
             android:text="Longitute:"
             android:textColor="@color/colorYellow" />
+
+        <ImageView
+            android:id="@+id/greenindicator"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="2dp"
+            android:visibility="invisible"
+            android:src="@drawable/greenindicator" />
 
         <ImageView
             android:id="@+id/arrow"
@@ -71,9 +82,11 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="2dp"
+            android:visibility="invisible"
             android:src="@drawable/compass_pointer" />
 
         <ImageView
+            android:visibility="invisible"
             android:id="@+id/marker"
             android:layout_width="20dp"
             android:layout_height="20dp"
@@ -87,10 +100,10 @@
             android:id="@+id/Az"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sensorInfoText"
+            android:layout_above="@+id/El"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="2dp"
             android:text="az: "
             android:textColor="@color/colorYellow" />
 
@@ -98,10 +111,10 @@
             android:id="@+id/El"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/Az"
+            android:layout_above="@+id/textView3"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="2dp"
             android:text="el: "
             android:textColor="@color/colorYellow" />
 
@@ -109,9 +122,9 @@
             android:id="@+id/testAz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sensorInfoText"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="4dp"
+            android:layout_above="@+id/testEl"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="2dp"
             android:layout_toEndOf="@+id/Az"
             android:text="NaN"
             android:textColor="@color/colorYellow" />
@@ -120,10 +133,10 @@
             android:id="@+id/testEl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/testAz"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="2dp"
-            android:layout_toEndOf="@+id/El"
+            android:layout_above="@+id/RotationDegree"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="3dp"
+            android:layout_toEndOf="@+id/Az"
             android:text="NaN"
             android:textColor="@color/colorYellow" />
 
@@ -143,10 +156,10 @@
             android:id="@+id/RotationDegree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/testEl"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="1dp"
-            android:layout_toEndOf="@+id/textView3"
+            android:layout_above="@+id/Latitude"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/Az"
             android:text="NaN"
             android:textColor="@color/colorYellow" />
 
@@ -154,11 +167,11 @@
             android:id="@+id/currentAzimuth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/timeTillNextSet"
-            android:layout_marginStart="4dp"
+            android:layout_below="@+id/SatName"
+            android:layout_marginStart="7dp"
             android:layout_marginTop="1dp"
             android:layout_toEndOf="@+id/targetElevationText"
-            android:text="..."
+            android:text=""
             android:textColor="@color/colorYellow" />
 
         <TextView
@@ -166,89 +179,126 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/currentAzimuth"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="7dp"
             android:layout_marginTop="2dp"
             android:layout_toEndOf="@+id/targetElevationText"
-            android:text="..."
+            android:text=""
             android:textColor="@color/colorYellow" />
 
         <TextView
             android:id="@+id/timeTillNextSet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/SatName"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="1dp"
+            android:layout_below="@+id/currentElevation"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="0dp"
             android:layout_toEndOf="@+id/countdownText"
-            android:text="TextView"
+            android:text=""
             android:textColor="@color/colorYellow" />
 
         <TextView
             android:id="@+id/textView3"
-            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/El"
+            android:layout_above="@+id/Latitude"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="2dp"
-            android:text="rot:" />
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="2dp"
+            android:text="rot:"
+            android:textColor="@color/colorYellow" />
 
         <TextView
             android:id="@+id/currentSatText"
-            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
-            android:text="Observed Sat. :" />
+            android:text="Observed Sat. :"
+            android:textColor="@color/colorYellow" />
 
 
         <TextView
             android:id="@+id/countdownText"
-            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/currentSatText"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="1dp"
-            android:text="Next target in :" />
+            android:layout_marginTop="40dp"
+            android:text="Next target in :"
+            android:visibility="invisible"
+            android:textColor="@color/colorYellow" />
 
         <TextView
             android:id="@+id/targetAzimuthText"
-            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/countdownText"
+            android:layout_below="@+id/currentSatText"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="1dp"
-            android:text="Targ. azimuth :" />
+            android:layout_marginTop="0dp"
+            android:text="Targ. azimuth :"
+            android:visibility="invisible"
+            android:textColor="@color/colorYellow" />
 
         <TextView
             android:id="@+id/targetElevationText"
-            android:textColor="@color/colorYellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/targetAzimuthText"
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
-            android:text="Targ. elevation :" />
+            android:text="Targ. elevation :"
+            android:visibility="invisible"
+            android:textColor="@color/colorYellow" />
 
         <TextView
             android:id="@+id/sensorInfoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/Az"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="152dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="2dp"
             android:text="Sensor info:"
             android:textColor="@color/colorYellow" />
+
+        <Button
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:padding="10dp"
+            android:background="@drawable/menubutton"
+            android:text="CLOSE SESSION"
+            android:textColor="@color/colorYellow" />
+
+        <TextView
+            android:id="@+id/initializingCountdown"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textSize="@android:dimen/notification_large_icon_width"
+            android:text="..." />
+
+        <TextView
+            android:id="@+id/initializeText1"
+            android:textColor="@color/colorYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="40dp"
+            android:layout_above="@+id/initializingCountdown"
+            android:layout_marginBottom="0dp"
+            android:text="STARTING IN:" />
 
     </RelativeLayout>
 </RelativeLayout>

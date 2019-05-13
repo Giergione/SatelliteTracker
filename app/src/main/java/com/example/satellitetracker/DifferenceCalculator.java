@@ -36,12 +36,11 @@ public class DifferenceCalculator {
 
 
     public int[] getDifferenceMatrix(float currentAzimuth, float currentElevation, float currentRotation) {
-        int[] values = new int[2];
+        int[] values = new int[3];
         values[0] = Math.round(getVerticalPlacement(currentElevation));
         values[1] = Math.round(getHorizontalPlacement(currentAzimuth));
 
         values = rotationTransformation(values, currentRotation);
-
 
         return values;
     }
@@ -72,7 +71,7 @@ public class DifferenceCalculator {
     }
 
     private int[] rotationTransformation(int[] values, float rotation) {
-        int[] transformed = new int[3];
+        int[] transformed = new int[4];
         float rotationDifference;
         if (rotation < -90f) {
             rotationDifference = 450f + rotation;
@@ -92,6 +91,11 @@ public class DifferenceCalculator {
         double angle = Math.toDegrees(Math.atan2(xLength,-yLength));
         transformed[2] = (int) Math.round(angle);
 
+        if (Math.abs(x) > Math.abs(y)) {
+            transformed[3] = (int) x;
+        } else {
+            transformed[3] = (int) y;
+        }
 
         return transformed;
     }

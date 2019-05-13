@@ -24,6 +24,7 @@ public class PositionUpdateAlarm extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "onReceive: my alarm event");
+        SatelliteTrackerApplication.riseReached = true;
         updaterRunnable updaterRunnable = new updaterRunnable();
         new Thread(updaterRunnable).start();
     }
@@ -49,6 +50,7 @@ public class PositionUpdateAlarm extends BroadcastReceiver {
                     e.printStackTrace();
                 }
             }
+            SatelliteTrackerApplication.lastPoint = true;
             Log.i(TAG, "reached the last point");
         }
     }

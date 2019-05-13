@@ -22,6 +22,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -137,7 +138,6 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                //showRequestAlert();
                 new ErrorFragment().show(getSupportFragmentManager(), "tag");
                 Log.i(TAG, "onErrorResponse: " + "failed");
             }
@@ -147,6 +147,7 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
 
     private void openTracker() {
         intent.putExtra("satellite_name", String.valueOf(satName.getText()));
+        finish();
         startActivity(intent);
     }
 
@@ -174,5 +175,10 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
     @Override
     public void onCancel() {
         button.setEnabled(true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        System.exit(0);
     }
 }
