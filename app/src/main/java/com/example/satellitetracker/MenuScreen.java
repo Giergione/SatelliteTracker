@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,10 +55,22 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
 
     String[] satellites = SatelliteNames.satellites;
 
+    int PERMISSION_ALL = 1;
+    String[] PERMISSIONS = {
+            Manifest.permission.CAMERA,
+            Manifest.permission.BODY_SENSORS,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.INTERNET,
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_screen);
+
+        if (!hasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
 
         intent = new Intent(this, SatelliteTrackerApplication.class);
 
@@ -144,6 +157,19 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
         });
         requestQueue.add(objectRequest);
     }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
 
     private void openTracker() {
         intent.putExtra("satellite_name", String.valueOf(satName.getText()));
