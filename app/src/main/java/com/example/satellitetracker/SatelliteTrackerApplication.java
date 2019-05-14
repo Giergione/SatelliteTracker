@@ -73,6 +73,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     //API data
     public static ArrayList<String> azimuths;
     public static ArrayList<String> elevations;
+    public static String dateTime;
     private CountDownTimer countDownTimer;
 
     //Layout
@@ -144,6 +145,7 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         satName = intent.getExtras().getString("satellite_name");
         azimuths = intent.getStringArrayListExtra("azimuths");
         elevations = intent.getStringArrayListExtra("elevations");
+        dateTime = intent.getStringExtra("date_time");
 
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -193,13 +195,13 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         Calendar startTime = Calendar.getInstance();
 
         //Dummy rise time for testing
-        startTime.set(Calendar.HOUR_OF_DAY, 4);
-        startTime.set(Calendar.MINUTE, 15);
-        startTime.set(Calendar.SECOND, 0);
+        //startTime.set(Calendar.HOUR_OF_DAY, 4);
+        //startTime.set(Calendar.MINUTE, 15);
+        //startTime.set(Calendar.SECOND, 0);
 
-        //startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
-        //startTime.set(Calendar.MINUTE, Integer.valueOf(dateTime.substring(dateTime.length()-5,dateTime.length()-3)));
-        //startTime.set(Calendar.SECOND, Integer.valueOf(dateTime.substring(dateTime.length()-2)));
+        startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
+        startTime.set(Calendar.MINUTE, Integer.valueOf(dateTime.substring(dateTime.length()-5,dateTime.length()-3)));
+        startTime.set(Calendar.SECOND, Integer.valueOf(dateTime.substring(dateTime.length()-2)));
 
         Calendar currentTime = Calendar.getInstance();
 
