@@ -1,11 +1,5 @@
 package com.example.satellitetracker;
 
-import android.util.Log;
-import android.view.Display;
-import android.widget.ImageView;
-
-import java.util.Observable;
-
 public class DifferenceCalculator {
 
     private static final String TAG = "DifferenceCalculator";
@@ -21,8 +15,6 @@ public class DifferenceCalculator {
 
 
     public DifferenceCalculator(float azimuth, float elevation) {
-        //this.centerCoordinates[0] = deviceWidth / 2;
-        //this.centerCoordinates[1] = deviceHeight / 2;
         synchronized (this) {
             if (azimuth < 0) {
                 this.targetAzimuth = 360 + azimuth;
@@ -31,7 +23,6 @@ public class DifferenceCalculator {
             this.targetElevation = elevation;
         }
         SatelliteTrackerApplication.latestUI = false;
-
     }
 
 
@@ -52,10 +43,8 @@ public class DifferenceCalculator {
         float a = (180f/horizontalFov)*deviceHeight;
         float shiftInPixels = u * a;
         if (currentAzimuth < 0) {
-            //return centerCoordinates[1] + Math.round(shiftInPixels);
             return Math.round(shiftInPixels);
         } else {
-            //return centerCoordinates[1] - Math.round(shiftInPixels);
             return - Math.round(shiftInPixels);
         }
     }
@@ -67,7 +56,6 @@ public class DifferenceCalculator {
         float shiftInPixels = u * a;
 
         return Math.round(shiftInPixels);
-
     }
 
     private int[] rotationTransformation(int[] values, float rotation) {
@@ -96,7 +84,6 @@ public class DifferenceCalculator {
         } else {
             transformed[3] = (int) y;
         }
-
         return transformed;
     }
 

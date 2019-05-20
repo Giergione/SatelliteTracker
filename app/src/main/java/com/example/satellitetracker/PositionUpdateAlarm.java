@@ -4,13 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.logging.Handler;
 
 import static com.example.satellitetracker.SatelliteTrackerApplication.azimuths;
 import static com.example.satellitetracker.SatelliteTrackerApplication.elevations;

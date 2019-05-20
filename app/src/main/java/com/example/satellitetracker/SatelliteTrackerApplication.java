@@ -3,13 +3,11 @@ package com.example.satellitetracker;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,38 +17,25 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.nfc.Tag;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.BoringLayout;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class SatelliteTrackerApplication extends AppCompatActivity
@@ -195,8 +180,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         Calendar startTime = Calendar.getInstance();
 
         //Dummy rise time for testing
-        //startTime.set(Calendar.HOUR_OF_DAY, 4);
-        //startTime.set(Calendar.MINUTE, 15);
+        //startTime.set(Calendar.HOUR_OF_DAY, 14);
+        //startTime.set(Calendar.MINUTE, 51);
         //startTime.set(Calendar.SECOND, 0);
 
         startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
