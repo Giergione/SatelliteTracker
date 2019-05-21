@@ -92,7 +92,6 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     //Sensor utility
     private static SensorManager sensorManager;
-    private Sensor gyroSensor;
     private Sensor rotationSensor;
 
     //Orientation sensor matrixes
@@ -152,7 +151,6 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         setupLayout();
 
         sensorManager =(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
 
@@ -180,8 +178,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         Calendar startTime = Calendar.getInstance();
 
         //Dummy rise time for testing
-        //startTime.set(Calendar.HOUR_OF_DAY, 14);
-        //startTime.set(Calendar.MINUTE, 51);
+        //startTime.set(Calendar.HOUR_OF_DAY, 19);
+        //startTime.set(Calendar.MINUTE, 16);
         //startTime.set(Calendar.SECOND, 0);
 
         startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
@@ -301,28 +299,17 @@ public class SatelliteTrackerApplication extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        //Log.d(TAG, "onResume");
 
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             locationManager.requestLocationUpdates(locationProvider, 1000, 1, this);
         }
 
-        if (gyroSensor != null){
-            sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
         if (rotationSensor != null) {
             sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -332,17 +319,14 @@ public class SatelliteTrackerApplication extends AppCompatActivity
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        //Log.d(TAG, "onStatusChanged " + provider);
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        //Log.d(TAG, "onProviderEnabled " + provider);
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-        //Log.d(TAG, "onProviderDisabled " + provider);
     }
 
 

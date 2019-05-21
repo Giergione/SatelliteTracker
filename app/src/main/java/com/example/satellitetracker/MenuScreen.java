@@ -93,12 +93,15 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
     }
 
     private void jsonParse() {
-        String url = "https://api.myjson.com/bins/92hzy";
-        JSONObject getParams = new JSONObject();
+        String uri = String.format("http://1.2.3.4:8080/endpoint?satName=%1$s&latitude=%2$s&longitude=%3$s&mobileTracker=%4$s",
+                String.valueOf(satName.getText()), String.valueOf(latitude), String.valueOf(longitude), "true");
+        uri = uri.replaceAll(" ", "%20").toLowerCase();
+
+        String testUri = "https://api.myjson.com/bins/92hzy";
         button.setEnabled(false);
 
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, url,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, testUri,
                 null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -130,10 +133,12 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
                 new ErrorFragment().show(getSupportFragmentManager(), "tag");
                 Log.i(TAG, "onErrorResponse: " + "failed");
             }
-        }) {
+        });
+        /*
+        {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> getParams = new HashMap<String, String>();
+                Map<String, String> getParams = new HashMap<>();
                 getParams.put("satName", String.valueOf(satName.getText()));
                 getParams.put("latitude", String.valueOf(latitude));
                 getParams.put("longitude", String.valueOf(longitude));
@@ -141,8 +146,10 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
                 return getParams;
             }
         };
+        */
 
 
+        Log.i(TAG, "jsonParse: " + uri);
         requestQueue.add(objectRequest);
     }
 
