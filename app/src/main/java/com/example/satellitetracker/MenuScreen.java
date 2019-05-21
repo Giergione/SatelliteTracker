@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -97,17 +98,18 @@ public class MenuScreen extends AppCompatActivity implements LocationListener,
                 String.valueOf(satName.getText()), String.valueOf(latitude), String.valueOf(longitude), "true");
         uri = uri.replaceAll(" ", "%20").toLowerCase();
 
-        String testUri = "https://api.myjson.com/bins/92hzy";
+        //String testUri = "https://api.myjson.com/bins/9787q";
         button.setEnabled(false);
 
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, testUri,
-                null, new Response.Listener<JSONObject>() {
+        JsonArrayRequest objectRequest = new JsonArrayRequest(Request.Method.GET, uri,
+                null, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONArray response) {
                 try {
-                    JSONArray jsonArray = response.getJSONArray("rollAngles");
-                    String startTime = response.getString("riseTime");
+                    JSONObject responseObject = response.getJSONObject(0);
+                    JSONArray jsonArray = responseObject.getJSONArray("pitchAngles");
+                    String startTime = responseObject.getString("riseTime");
                     ArrayList<String> azimuths = new ArrayList<>();
                     ArrayList<String> elevations = new ArrayList<>();
 

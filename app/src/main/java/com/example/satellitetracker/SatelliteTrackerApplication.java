@@ -178,8 +178,8 @@ public class SatelliteTrackerApplication extends AppCompatActivity
         Calendar startTime = Calendar.getInstance();
 
         //Dummy rise time for testing
-        //startTime.set(Calendar.HOUR_OF_DAY, 19);
-        //startTime.set(Calendar.MINUTE, 16);
+        //startTime.set(Calendar.HOUR_OF_DAY, 12);
+        //startTime.set(Calendar.MINUTE, 0);
         //startTime.set(Calendar.SECOND, 0);
 
         startTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(dateTime.substring(dateTime.length()-8, dateTime.length()-6)));
